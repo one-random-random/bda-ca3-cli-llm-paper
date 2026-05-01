@@ -1,6 +1,6 @@
 ## This is the list of core prompts that I have used to build this app.
 
-## Chat GPT - Codex - GPT 5.4
+## Chat GPT - Codex - GPT 5.4/5.5
 
 ## First prompt in Plan mode.
 I have just installed Ollama on my local machine.
@@ -14,3 +14,7 @@ Additionally, i want a way to ensure that the LLM model will only use the paper 
 Currently the app.py file contains the entire code. This is difficult to follow.
 Break down the file into easier to digest parts that make logical sense, follow best practice for Python development.
 All functionality should remain the same for the user.
+
+## Third prompt, more debugging
+
+In the ollama_client.py file, i have added a console.print statement, I want this to only print when user has passed the --debug flag similar to the checks in the commands.py file. Implement this in a clean, concise manner.

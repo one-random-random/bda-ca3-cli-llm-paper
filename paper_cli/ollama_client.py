@@ -1,7 +1,8 @@
 from __future__ import annotations
 
-from paper_cli.ui import console
 import ollama
+
+from paper_cli.ui import console
 
 
 def embed_texts(model: str, texts: list[str]) -> list[list[float]]:
@@ -27,6 +28,7 @@ def chat_with_context(
     user_prompt: str,
     temperature: float,
     num_predict: int,
+    debug: bool = False,
 ) -> str:
     try:
         response = ollama.chat(
@@ -38,7 +40,8 @@ def chat_with_context(
             think=False,
             options={"temperature": temperature, "num_predict": num_predict},
         )
-        console.print(f"[dim]LLM response distances: {response}[/dim]")
+        if debug:
+            console.print(f"[dim]LLM response: {response}[/dim]")
     except Exception as exc:
         raise RuntimeError(
             f"Could not chat with Ollama model '{chat_model}'. Run: ollama pull {chat_model}"

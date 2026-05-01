@@ -48,6 +48,7 @@ def answer_question(
     chat_model: str,
     temperature: float,
     num_predict: int,
+    debug: bool = False,
 ) -> str:
     system_prompt = (
         "You are a careful research assistant. Answer the user's question using only the "
@@ -70,4 +71,5 @@ def answer_question(
         user_prompt=user_prompt,
         temperature=temperature,
         num_predict=num_predict,
+        debug=debug,
     )

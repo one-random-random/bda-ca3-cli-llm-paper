@@ -108,6 +108,7 @@ def chat(args: argparse.Namespace) -> None:
                 chat_model=args.chat_model,
                 temperature=args.temperature,
                 num_predict=args.num_predict,
+                debug=args.debug,
             )
             console.print(Panel(Markdown(answer), title="Answer", border_style="green"))
             if context is not None:
@@ -147,6 +148,7 @@ def ask(args: argparse.Namespace) -> None:
         chat_model=args.chat_model,
         temperature=args.temperature,
         num_predict=args.num_predict,
+        debug=args.debug,
     )
     console.print(Markdown(answer))
     console.print(f"[dim]Source pages: {', '.join(f'p. {page}' for page in pages)}[/dim]")
