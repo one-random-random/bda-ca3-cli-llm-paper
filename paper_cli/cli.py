@@ -8,7 +8,6 @@ from paper_cli.config import (
     DEFAULT_CHUNK_OVERLAP,
     DEFAULT_CHUNK_WORDS,
     DEFAULT_EMBED_MODEL,
-    DEFAULT_INDEX_DIR,
     DEFAULT_MAX_DISTANCE,
     DEFAULT_PDF,
     DEFAULT_TOP_K,
@@ -24,7 +23,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     index_parser = subparsers.add_parser("index", help="Extract and index the PDF paper.")
     index_parser.add_argument("--pdf", default=str(DEFAULT_PDF), help="Path to the source PDF.")
-    index_parser.add_argument("--index-dir", default=str(DEFAULT_INDEX_DIR), help="Persistent Chroma index directory.")
+    index_parser.add_argument("--index-dir", default=None, help="Persistent Chroma index directory. Defaults to .paper_index_<embed model>.")
     index_parser.add_argument("--embed-model", default=DEFAULT_EMBED_MODEL, help="Ollama embedding model.")
     index_parser.add_argument("--chunk-words", type=int, default=DEFAULT_CHUNK_WORDS, help="Words per text chunk.")
     index_parser.add_argument("--chunk-overlap", type=int, default=DEFAULT_CHUNK_OVERLAP, help="Overlapping words between chunks.")
@@ -32,7 +31,7 @@ def build_parser() -> argparse.ArgumentParser:
     index_parser.set_defaults(func=index_paper)
 
     chat_parser = subparsers.add_parser("chat", help="Start an interactive paper-grounded chat.")
-    chat_parser.add_argument("--index-dir", default=str(DEFAULT_INDEX_DIR), help="Persistent Chroma index directory.")
+    chat_parser.add_argument("--index-dir", default=None, help="Persistent Chroma index directory. Defaults to .paper_index_<embed model>.")
     chat_parser.add_argument("--chat-model", default=DEFAULT_CHAT_MODEL, help="Ollama chat model.")
     chat_parser.add_argument("--embed-model", default=DEFAULT_EMBED_MODEL, help="Ollama embedding model.")
     chat_parser.add_argument("--top-k", type=int, default=DEFAULT_TOP_K, help="Number of paper chunks to retrieve.")
@@ -49,7 +48,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     ask_parser = subparsers.add_parser("ask", help="Ask one question and print one answer.")
     ask_parser.add_argument("question", help="Question to ask about the indexed paper.")
-    ask_parser.add_argument("--index-dir", default=str(DEFAULT_INDEX_DIR), help="Persistent Chroma index directory.")
+    ask_parser.add_argument("--index-dir", default=None, help="Persistent Chroma index directory. Defaults to .paper_index_<embed model>.")
     ask_parser.add_argument("--chat-model", default=DEFAULT_CHAT_MODEL, help="Ollama chat model.")
     ask_parser.add_argument("--embed-model", default=DEFAULT_EMBED_MODEL, help="Ollama embedding model.")
     ask_parser.add_argument("--top-k", type=int, default=DEFAULT_TOP_K, help="Number of paper chunks to retrieve.")

@@ -13,7 +13,8 @@ def embed_texts(model: str, texts: list[str]) -> list[list[float]]:
     except Exception as exc:
         raise RuntimeError(
             f"Could not create embeddings with Ollama model '{model}'. "
-            f"Run: ollama pull {model}"
+            f"Ollama error: {exc}. "
+            f"If the model is already installed, try a smaller --batch-size or --chunk-words value."
         ) from exc
 
     embeddings = response.get("embeddings")

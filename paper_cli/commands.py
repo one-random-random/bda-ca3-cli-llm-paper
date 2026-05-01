@@ -7,6 +7,7 @@ from rich.markdown import Markdown
 from rich.panel import Panel
 from rich.prompt import Prompt
 
+from paper_cli.config import index_dir_for_embed_model
 from paper_cli.ollama_client import embed_texts
 from paper_cli.pdf import build_chunks, ensure_pdf_exists
 from paper_cli.qa import answer_question, retrieve_context
@@ -14,9 +15,15 @@ from paper_cli.ui import console
 from paper_cli.vector_store import get_collection, recreate_collection
 
 
+def resolve_index_dir(args: argparse.Namespace) -> Path:
+    if args.index_dir:
+        return Path(args.index_dir).expanduser().resolve()
+    return index_dir_for_embed_model(args.embed_model).resolve()
+
+
 def index_paper(args: argparse.Namespace) -> None:
     pdf_path = Path(args.pdf).expanduser().resolve()
-    index_dir = Path(args.index_dir).expanduser().resolve()
+    index_dir = resolve_index_dir(args)
     ensure_pdf_exists(pdf_path)
 
     console.print(Panel.fit(f"Indexing\n[bold]{pdf_path.name}[/bold]", title="Paper CLI"))
@@ -52,7 +59,7 @@ def index_paper(args: argparse.Namespace) -> None:
 
 
 def chat(args: argparse.Namespace) -> None:
-    index_dir = Path(args.index_dir).expanduser().resolve()
+    index_dir = resolve_index_dir(args)
     if not index_dir.exists():
         raise RuntimeError("No paper index found. Run: python app.py index")
 
@@ -120,7 +127,7 @@ def chat(args: argparse.Namespace) -> None:
 
 
 def ask(args: argparse.Namespace) -> None:
-    index_dir = Path(args.index_dir).expanduser().resolve()
+    index_dir = resolve_index_dir(args)
     if not index_dir.exists():
         raise RuntimeError("No paper index found. Run: python app.py index")
 
