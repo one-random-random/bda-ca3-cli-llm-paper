@@ -9,3 +9,8 @@ It should allow a user to ask questions and provide them with answers.
 Additionally, i want a way to ensure that the LLM model will only use the paper "C:\Users\User\Documents\ATUCourse\BigDataArchitecture\Assignment3\CLI Papaer -Research Landscape of Agentic AI and LLM - Apps, Challenges and Future Direction.pdf" as its source for answering questions. Tell me how i can approach this.
 
 
+## Second prompt in Plan mode, after creation of app and some tweaks.
+
+Currently the app.py file contains the entire code. This is difficult to follow.
+Break down the file into easier to digest parts that make logical sense, follow best practice for Python development.
+All functionality should remain the same for the user.
