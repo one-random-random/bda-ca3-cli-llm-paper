@@ -14,13 +14,19 @@ EMBED_MODEL_INDEX_NAMES = {
     "snowflake-arctic-embed": "snowflake",
 }
 COLLECTION_NAME = "agentic_ai_paper"
-DEFAULT_CHAT_MODEL = "qwen3.5:4b" #llama3"  # "qwen3.5:4b"
-DEFAULT_EMBED_MODEL = "nomic-embed-text" # "mxbai-embed-large" # "snowflake-arctic-embed"
+DEFAULT_CHAT_MODEL = "qwen3.5:4b"  #llama3"  
+DEFAULT_EMBED_MODEL = "mxbai-embed-large"  # "mxbai-embed-large" # "snowflake-arctic-embed"
 DEFAULT_INDEX_DIR = APP_DIR / f".paper_index_{EMBED_MODEL_INDEX_NAMES[DEFAULT_EMBED_MODEL]}"
 DEFAULT_TOP_K = 5
-DEFAULT_CHUNK_WORDS = 260
-DEFAULT_CHUNK_OVERLAP = 60
+DEFAULT_CHUNK_WORDS = 120
+DEFAULT_CHUNK_OVERLAP = 30
+DEFAULT_BATCH_SIZE = 1
 DEFAULT_MAX_DISTANCE = 0.5
+RETRIEVAL_REFUSAL_MESSAGE = (
+    "No relevant documents found. The paper I am referencing does not have relevant "
+    "information for your question so I cannot answer."
+)
+LLM_REFUSAL_MESSAGE = "I cannot answer that from the provided paper."
 
 
 def index_dir_for_embed_model(embed_model: str) -> Path:

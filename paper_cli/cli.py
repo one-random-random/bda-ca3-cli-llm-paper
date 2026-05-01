@@ -5,6 +5,7 @@ import argparse
 from paper_cli.commands import ask, chat, index_paper
 from paper_cli.config import (
     DEFAULT_CHAT_MODEL,
+    DEFAULT_BATCH_SIZE,
     DEFAULT_CHUNK_OVERLAP,
     DEFAULT_CHUNK_WORDS,
     DEFAULT_EMBED_MODEL,
@@ -27,7 +28,7 @@ def build_parser() -> argparse.ArgumentParser:
     index_parser.add_argument("--embed-model", default=DEFAULT_EMBED_MODEL, help="Ollama embedding model.")
     index_parser.add_argument("--chunk-words", type=int, default=DEFAULT_CHUNK_WORDS, help="Words per text chunk.")
     index_parser.add_argument("--chunk-overlap", type=int, default=DEFAULT_CHUNK_OVERLAP, help="Overlapping words between chunks.")
-    index_parser.add_argument("--batch-size", type=int, default=16, help="Embedding batch size.")
+    index_parser.add_argument("--batch-size", type=int, default=DEFAULT_BATCH_SIZE, help="Embedding batch size.")
     index_parser.set_defaults(func=index_paper)
 
     chat_parser = subparsers.add_parser("chat", help="Start an interactive paper-grounded chat.")

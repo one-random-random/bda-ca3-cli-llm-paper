@@ -3,11 +3,12 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
+from rich.align import Align
 from rich.markdown import Markdown
 from rich.panel import Panel
 from rich.prompt import Prompt
 
-from paper_cli.config import index_dir_for_embed_model
+from paper_cli.config import LLM_REFUSAL_MESSAGE, RETRIEVAL_REFUSAL_MESSAGE, index_dir_for_embed_model
 from paper_cli.ollama_client import embed_texts
 from paper_cli.pdf import build_chunks, ensure_pdf_exists
 from paper_cli.qa import answer_question, retrieve_context
@@ -19,6 +20,17 @@ def resolve_index_dir(args: argparse.Namespace) -> Path:
     if args.index_dir:
         return Path(args.index_dir).expanduser().resolve()
     return index_dir_for_embed_model(args.embed_model).resolve()
+
+
+def index_missing_message(index_dir: Path, embed_model: str) -> str:
+    return (
+        f"No paper index found at {index_dir}. "
+        f"Run: python app.py index --embed-model {embed_model}"
+    )
+
+
+def answer_is_refusal(answer: str) -> bool:
+    return answer.strip() == LLM_REFUSAL_MESSAGE
 
 
 def index_paper(args: argparse.Namespace) -> None:
@@ -61,15 +73,20 @@ def index_paper(args: argparse.Namespace) -> None:
 def chat(args: argparse.Namespace) -> None:
     index_dir = resolve_index_dir(args)
     if not index_dir.exists():
-        raise RuntimeError("No paper index found. Run: python app.py index")
+        raise RuntimeError(index_missing_message(index_dir, args.embed_model))
 
     collection = get_collection(index_dir)
     if collection.count() == 0:
         raise RuntimeError("The paper index is empty. Run: python app.py index")
 
     console.print(
-        Panel.fit(
-            "Ask questions about the indexed paper.\nType [bold]exit[/bold], [bold]quit[/bold], or press Ctrl+C to leave.",
+        Panel(
+            Align.center(
+                "Ask questions about the indexed paper.\n"
+                "Type [bold]exit[/bold], [bold]quit[/bold], or press Ctrl+C to leave.\n\n"
+                f"LLM model: [bold]{args.chat_model}[/bold]\n"
+                f"Embedding model: [bold]{args.embed_model}[/bold]"
+            ),
             title="Paper-Grounded LLM CLI",
         )
     )
@@ -98,13 +115,12 @@ def chat(args: argparse.Namespace) -> None:
             if context is None:
                 console.print(
                     Panel(
-                        "No relevant documents found. The paper I am referencing does not have relevant information for your question so I cannot answer.",
+                        RETRIEVAL_REFUSAL_MESSAGE,
                         title="Answer",
                         border_style="yellow",
                     )
                 )
                 if args.debug and distances:
-                    console.print(f"[dim]Retrieval distances: {distances}[/dim]")
                     console.print(f"[dim]Retrieval distances: {distances}[/dim]")
                 continue
 
@@ -118,7 +134,7 @@ def chat(args: argparse.Namespace) -> None:
                 debug=args.debug,
             )
             console.print(Panel(Markdown(answer), title="Answer", border_style="green"))
-            if context is not None:
+            if not answer_is_refusal(answer):
                 console.print(f"[dim]Source pages: {', '.join(f'p. {page}' for page in pages)}[/dim]")
             if args.debug:
                 console.print(f"[dim]Retrieval distances: {distances}[/dim]")
@@ -129,7 +145,7 @@ def chat(args: argparse.Namespace) -> None:
 def ask(args: argparse.Namespace) -> None:
     index_dir = resolve_index_dir(args)
     if not index_dir.exists():
-        raise RuntimeError("No paper index found. Run: python app.py index")
+        raise RuntimeError(index_missing_message(index_dir, args.embed_model))
 
     collection = get_collection(index_dir)
     if collection.count() == 0:
@@ -143,7 +159,7 @@ def ask(args: argparse.Namespace) -> None:
         max_distance=args.max_distance,
     )
     if context is None:
-        console.print("No relevant documents found. The paper I am referencing does not have relevant information for your question so I cannot answer.",)
+        console.print(RETRIEVAL_REFUSAL_MESSAGE)
         if args.debug and distances:
             console.print(f"[dim]Retrieval distances: {distances}[/dim]")
         return
@@ -158,6 +174,7 @@ def ask(args: argparse.Namespace) -> None:
         debug=args.debug,
     )
     console.print(Markdown(answer))
-    console.print(f"[dim]Source pages: {', '.join(f'p. {page}' for page in pages)}[/dim]")
+    if not answer_is_refusal(answer):
+        console.print(f"[dim]Source pages: {', '.join(f'p. {page}' for page in pages)}[/dim]")
     if args.debug:
         console.print(f"[dim]Retrieval distances: {distances}[/dim]")

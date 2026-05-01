@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from chromadb.api.models.Collection import Collection
 
+from paper_cli.config import LLM_REFUSAL_MESSAGE
 from paper_cli.ollama_client import chat_with_context, embed_texts
 
 
@@ -57,7 +58,7 @@ def answer_question(
         "the user's specific question.\n\n"
         "If the excerpts do not directly answer the user's specific question, or only contain "
         "related background information, respond with exactly this sentence and nothing else:\n"
-        "I cannot answer that from the provided paper.\n\n"
+        f"{LLM_REFUSAL_MESSAGE}\n\n"
         "Do not explain why you cannot answer. Do not summarize related excerpts. Do not include "
         "citations when refusing.\n\n"
         "If the excerpts do directly answer the question, provide a concise answer using only "
