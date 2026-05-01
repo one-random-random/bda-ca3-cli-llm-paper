@@ -91,7 +91,7 @@ def chat(args: argparse.Namespace) -> None:
             if context is None:
                 console.print(
                     Panel(
-                        "The paper I am referencing does not have relevant information for your question so I cannot answer.",
+                        "No relevant documents found. The paper I am referencing does not have relevant information for your question so I cannot answer.",
                         title="Answer",
                         border_style="yellow",
                     )
@@ -136,7 +136,7 @@ def ask(args: argparse.Namespace) -> None:
         max_distance=args.max_distance,
     )
     if context is None:
-        console.print("I cannot answer that from the provided paper.")
+        console.print("No relevant documents found. The paper I am referencing does not have relevant information for your question so I cannot answer.",)
         if args.debug and distances:
             console.print(f"[dim]Retrieval distances: {distances}[/dim]")
         return
